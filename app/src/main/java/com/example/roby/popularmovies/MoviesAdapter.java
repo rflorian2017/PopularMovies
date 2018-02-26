@@ -41,7 +41,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
     }
 
-    // Store a member variable for the contacts
+    // Store a member variable for the movies
     private List<Movie> mMovies;
     // Store the context for easy access
     private Context mContext;
@@ -49,16 +49,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     //string for sorting criteria used in JSON request later on
     String mSortingCriteria;
 
-    // COMPLETED (3) Create a final private ForecastAdapterOnClickHandler called mClickHandler
+    // Click handler to allow transition to a detail activity
     final private MovieAdapterOnClickHandler mClickHandler;
 
-    // COMPLETED (1) Add an interface called ForecastAdapterOnClickHandler
     public interface MovieAdapterOnClickHandler {
         void onClick(Movie param);
 
     }
 
-    // Pass in the contact array into the constructor
+    // Pass in the click handler to the constructor
     public MoviesAdapter(MovieAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
     }

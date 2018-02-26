@@ -39,10 +39,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         mRecyclerView.setHasFixedSize(true);
 
+		//set the adapter of the recycle view
         mMovieAdapter = new MoviesAdapter(this);
         mRecyclerView.setAdapter(mMovieAdapter);
 
+		//preferences are used to switch the sorting criteria
         setupSharedPreferences();
+		
+		//load the data from the server
         loadMovieData();
     }
 
@@ -55,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     /**
-     * This method will get the user's preferred location for weather, and then tell some
-     * background method to get the weather data in the background.
+     * This method will get the user's sorting criteria, and then tell a
+     * background method to get the movie data in the background.
      */
     private void loadMovieData() {
         new FetchMovieTask().execute(mMovieAdapter.getSortingCriteria());
@@ -101,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     @Override
     /**
-     * Need to
+     * Need to get the sorting criteria from the shared pref
      */
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals((getString(R.string.pref_sort_crit)))) {
@@ -113,10 +117,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     protected void onDestroy() {
         super.onDestroy();
+		//unregister the shared pref listener
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 
+	// async task used to get the movie data in background
     public class FetchMovieTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
@@ -127,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         @Override
         protected List<Movie> doInBackground(String... params) {
 
-            /* If there's no zip code, there's nothing to look up. */
             if (params.length == 0) {
                 return null;
             }

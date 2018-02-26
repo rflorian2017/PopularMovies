@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+//class used for the detail activity that displays a movie information. Reads the shared information between the intents
 public class MovieDetailActivity extends AppCompatActivity {
     public static final String POSTER_URL = "poster_url";
     public static final String MOVIE_TITLE = "movie_title";
