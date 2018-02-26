@@ -14,6 +14,7 @@ import java.util.List;
  */
 
 public class JsonUtils {
+	//declare final strings for the fields required from the JSON response
     private static final String JSON_REQ_RESULTS = "results";
     private static final String MOVIE_ID = "id";
     private static final String MOVIE_POSTER_PATH = "poster_path";
@@ -49,9 +50,10 @@ public class JsonUtils {
          */
 
         JSONArray resultsArray;
-        List<Movie> moviesArray = new ArrayList<>();;
+        List<Movie> moviesArray = new ArrayList<>();
 
         try {
+			//read out everything in "one shot" by looping through the JSON array
             resultsArray = movieResultsJSON.getJSONArray(JSON_REQ_RESULTS);
             for (int i=0; i< resultsArray.length(); i++) {
                 JSONObject movieRow = new JSONObject(resultsArray.getString(i));

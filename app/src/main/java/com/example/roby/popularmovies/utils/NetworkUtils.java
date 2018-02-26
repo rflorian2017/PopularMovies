@@ -26,7 +26,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * These utilities will be used to communicate with the weather servers.
+ * These utilities will be used to communicate with the movie database server.
  */
 public final class NetworkUtils {
 
@@ -35,16 +35,11 @@ public final class NetworkUtils {
     private static final String THEMOVIEDB_BASE_URL =
             "https://api.themoviedb.org";
 
-    /*
-     * NOTE: These values only effect responses from OpenWeatherMap, NOT from the fake weather
-     * server. They are simply here to allow us to teach you how to build a URL if you were to use
-     * a real API.If you want to connect your app to OpenWeatherMap's API, feel free to! However,
-     * we are not going to show you how to do so in this course.
-     */
 
     /* The format we want our API to return */
     private static final String format = "json";
 
+	// the API key that has to be provided for accessing the API 
     final static String API_KEY_PARAM = "api_key";
     final static String API_KEY = "KEY";
     final static String API_VER = "3";
@@ -53,11 +48,10 @@ public final class NetworkUtils {
     final static String QUERY_REQ = "movie";
 
     /**
-     * Builds the URL used to talk to the weather server using a location. This location is based
-     * on the query capabilities of the weather provider that we are using.
+     * Builds the URL used to talk to the movie server using a sorting criteria, named queryBase. 
      *
-     * @param queryBase The location that will be queried for.
-     * @return The URL to use to query the weather server.
+     * @param queryBase The sorting cirteria : popular or top_rated
+     * @return The URL to use to query the movie server.
      */
     public static URL buildUrl(String queryBase) {
         Uri builtUri = Uri.parse(THEMOVIEDB_BASE_URL).buildUpon()
