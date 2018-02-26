@@ -2,6 +2,8 @@ package com.example.roby.popularmovies.model;
 
 /**
  * Created by Roby on 2/22/2018.
+ * The movie object consists for now from the title, the id, poster, plot, user rating and release date.
+ * I provided accessors for each propriety of this object. The constructor contains the fields described above
  */
 
 public class Movie {
