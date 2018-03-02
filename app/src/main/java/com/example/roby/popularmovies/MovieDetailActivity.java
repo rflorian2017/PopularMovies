@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.roby.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
 //class used for the detail activity that displays a movie information. Reads the shared information between the intents
@@ -15,7 +16,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     public static final String MOVIE_USER_RATING = "movie_rating";
     public static final String MOVIE_RELEASE_DATE = "movie_date";
     public static final String MOVIE_PLOT = "movie_plot";
-
+    public static final String MOVIE_PARCEL = "movie_parcel";
 
 
     @Override
@@ -30,20 +31,22 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         }
 
+        Movie passedMovie = (Movie) intent.getParcelableExtra(MOVIE_PARCEL);
+
         Picasso.with(this)
-                .load(intent.getStringExtra(POSTER_URL))
+                .load(passedMovie.getMoviePoster())
                 .into(posterIv);
 
         TextView movieTitle = findViewById(R.id.original_title);
-        movieTitle.setText(intent.getStringExtra(MOVIE_TITLE));
+        movieTitle.setText(passedMovie.getOriginalTitle());
 
         TextView moviePlot = findViewById(R.id.movie_synopsis);
-        moviePlot.setText(intent.getStringExtra(MOVIE_PLOT));
+        moviePlot.setText(passedMovie.getPlotSynopsis());
 
         TextView movieUserRating = findViewById(R.id.movie_user_rating);
-        movieUserRating.setText(intent.getStringExtra(MOVIE_USER_RATING));
+        movieUserRating.setText(passedMovie.getUserRating());
 
         TextView movieReleaseDate = findViewById(R.id.movie_release_date);
-        movieReleaseDate.setText(intent.getStringExtra(MOVIE_RELEASE_DATE));
+        movieReleaseDate.setText(passedMovie.getReleaseDate());
     }
 }

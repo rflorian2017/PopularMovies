@@ -18,6 +18,8 @@ package com.example.roby.popularmovies.utils;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.roby.popularmovies.BuildConfig;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -41,7 +43,7 @@ public final class NetworkUtils {
 
 	// the API key that has to be provided for accessing the API 
     final static String API_KEY_PARAM = "api_key";
-    final static String API_KEY = "KEY";
+    final static String API_KEY = BuildConfig.API_KEY;
     final static String API_VER = "3";
 
     final static String QUERY_PARAM = "popular";
