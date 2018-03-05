@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_poster">10dp</dimen>
+    <dimen name="poster_layout_height">200dp</dimen>
+    <dimen name="poster_layout_margin_top">8dp</dimen>
+</resources>

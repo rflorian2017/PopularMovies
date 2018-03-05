@@ -12,4 +12,5 @@
     <string name="pref_sort_label">Sorting criteria</string>
     <string name="pref_sort_crit_off">By top rated</string>
     <string name="pref_sort_crit_on">By popularity</string>
+    <string name="movie_reviews">Reviews:</string>
 </resources>

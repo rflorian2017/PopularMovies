@@ -105,6 +105,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         notifyDataSetChanged();
     }
 
+    public List<Movie> getMovies() {
+        return mMovies;
+    }
     public void setSortingCriteria(String sortingCriteria) {
         mSortingCriteria = sortingCriteria;
     }

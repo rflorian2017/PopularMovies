@@ -48,6 +48,8 @@ public final class NetworkUtils {
 
     final static String QUERY_PARAM = "popular";
     final static String QUERY_REQ = "movie";
+    public final static String VIDEOS_PARAM = "videos";
+    public final static String REVIEWS_PARAM = "reviews";
 
     /**
      * Builds the URL used to talk to the movie server using a sorting criteria, named queryBase. 
@@ -55,7 +57,7 @@ public final class NetworkUtils {
      * @param queryBase The sorting cirteria : popular or top_rated
      * @return The URL to use to query the movie server.
      */
-    public static URL buildUrl(String queryBase) {
+    public static URL buildSortingCriteriaUrl(String queryBase) {
         Uri builtUri = Uri.parse(THEMOVIEDB_BASE_URL).buildUpon()
                 .appendPath(API_VER)
                 .appendPath(QUERY_REQ)
@@ -77,16 +79,29 @@ public final class NetworkUtils {
     }
 
     /**
-     * Builds the URL used to talk to the weather server using latitude and longitude of a
-     * location.
      *
-     * @param lat The latitude of the location
-     * @param lon The longitude of the location
-     * @return The Url to use to query the weather server.
+     * @param movieId movie Id
+     * @param infotypeParameter Can be videos or user reviews
+     * @return The formed URL for the request
      */
-    public static URL buildUrl(Double lat, Double lon) {
-        /** This will be implemented in a future lesson **/
-        return null;
+    public static URL buildMovieDataUrl(String movieId, String infotypeParameter) {
+        Uri builtUri = Uri.parse(THEMOVIEDB_BASE_URL).buildUpon()
+                .appendPath(API_VER)
+                .appendPath(QUERY_REQ)
+                .appendPath(movieId)
+                .appendPath(infotypeParameter)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY)
+
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
     }
 
     /**

@@ -5,39 +5,44 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.roby.popularmovies.model.Movie;
-import com.example.roby.popularmovies.utils.FetchMovieTask;
 import com.example.roby.popularmovies.utils.JsonUtils;
 import com.example.roby.popularmovies.utils.NetworkUtils;
 
 import java.net.URL;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<List<Movie>> {
     private RecyclerView mRecyclerView;
     private MoviesAdapter mMovieAdapter;
     public static final int SPAN_COUNT = 2;
     private static final String SORTING_BY_POPULARITY = "popular";
+    private static final String SORTING_CRITERIA_EXTRA = "popular";
     private static final String SORTING_BY_TOP_RATED = "top_rated";
     private static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
+    private static final int MOVIE_QUERIES_LOADER_ID = 0;
+    private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        mRecyclerView = findViewById(R.id.rv_movies);
 
         //set the layout manager to grid
         GridLayoutManager layoutManager = new GridLayoutManager(this, SPAN_COUNT, GridLayoutManager.VERTICAL, false);
@@ -52,8 +57,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         //preferences are used to switch the sorting criteria
         setupSharedPreferences();
 
-        //load the data from the server
-        loadMovieData();
+        //LoaderManager.enableDebugLogging(true);
+        getSupportLoaderManager().initLoader(MOVIE_QUERIES_LOADER_ID, null, this);
+
     }
 
     //this is used to change the pref of the sorting criteria
@@ -65,19 +71,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     /**
-     * This method will get the user's sorting criteria, and then tell a
-     * background method to get the movie data in the background.
+     * This method is used when we are resetting data, so that at one point in time during a
+     * refresh of our data, you can see that there is no data showing.
      */
-    private void loadMovieData() {
-        ConnectivityManager cm =
-                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = (activeNetwork != null) &&
-                activeNetwork.isConnectedOrConnecting();
-        if (isConnected)
-            new FetchMovieTask(mMovieAdapter).execute(mMovieAdapter.getSortingCriteria());
-        else
-            Toast.makeText(this, CHECK_INTERNET_CONNECTION, Toast.LENGTH_LONG).show();
+    private void invalidateData() {
+        mMovieAdapter.setMovieData(null);
     }
 
     @Override
@@ -121,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals((getString(R.string.pref_sort_crit)))) {
             mMovieAdapter.setSortingCriteria(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_sort_crit_default)) ? SORTING_BY_POPULARITY : SORTING_BY_TOP_RATED);
-            loadMovieData();
+            PREFERENCES_HAVE_BEEN_UPDATED = true;
         }
     }
 
@@ -131,5 +129,85 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         //unregister the shared pref listener
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public Loader<List<Movie>> onCreateLoader(int i, final Bundle args) {
+        return new AsyncTaskLoader<List<Movie>>(this) {
+            //for caching purposes
+            List<Movie> mMovies = null;
+
+            @Override
+            protected void onStartLoading() {
+                if (mMovies != null) {
+                    deliverResult(mMovies);
+                } else {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public List<Movie> loadInBackground() {
+                String sortingCriteria = mMovieAdapter.getSortingCriteria();
+                if ((sortingCriteria == null) || TextUtils.isEmpty(sortingCriteria)) {
+                    return null;
+                }
+                String movieRequest = sortingCriteria;
+                URL movieRequestUrl = NetworkUtils.buildSortingCriteriaUrl(movieRequest);
+
+                try {
+                    String jsonWeatherResponse = NetworkUtils
+                            .getResponseFromHttpUrl(movieRequestUrl);
+
+                    return JsonUtils.parseMovieJson(jsonWeatherResponse);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            public void deliverResult(List<Movie> data) {
+                super.deliverResult(data);
+                mMovies = data;
+            }
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+        mMovieAdapter.setMovieData(movies);
+        if (null == movies) {
+            showErrorMessage();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (PREFERENCES_HAVE_BEEN_UPDATED) {
+            invalidateData();
+            getSupportLoaderManager().restartLoader(MOVIE_QUERIES_LOADER_ID, null, this);
+            PREFERENCES_HAVE_BEEN_UPDATED = false;
+        }
+    }
+
+    private void showErrorMessage() {
+        ConnectivityManager cm =
+                (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = (activeNetwork != null) &&
+                activeNetwork.isConnectedOrConnecting();
+        if (isConnected) {
+
+        }
+        else
+            Toast.makeText(this, CHECK_INTERNET_CONNECTION, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Movie>> loader) {
+
     }
 }
