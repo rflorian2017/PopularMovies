@@ -7,9 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.roby.popularmovies.model.Movie;
+import com.example.roby.popularmovies.model.MovieHeaderViewHolder;
 import com.example.roby.popularmovies.model.MovieReviewViewHolder;
 import com.example.roby.popularmovies.model.MovieVideoViewHolder;
+import com.example.roby.popularmovies.model.SectionHeaderViewHolder;
 import com.example.roby.popularmovies.model.UserReview;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,7 +22,7 @@ import java.util.List;
  */
 
 public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final int MOVIE_VIDEO_VIEW = 0, MOVIE_REVIEW_VIEW = 1;
+    private final int MOVIE_VIDEO_VIEW = 0, MOVIE_REVIEW_VIEW = 1, MOVIE_VIDEO_DETAILS_HEADER = 2, SECTION_HEADER = 3;
 
     private List<Object> items;
 
@@ -47,6 +51,14 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 View movieVideoView = inflater.inflate(R.layout.movie_video, viewGroup, false);
                 viewHolder = new MovieVideoViewHolder(movieVideoView);
                 break;
+            case MOVIE_VIDEO_DETAILS_HEADER:
+                View movieHeaderView = inflater.inflate(R.layout.movie_header_info, viewGroup, false);
+                viewHolder = new MovieHeaderViewHolder(movieHeaderView);
+                break;
+            case SECTION_HEADER:
+                View sectionHeader = inflater.inflate(R.layout.section_header_layout, viewGroup, false);
+                viewHolder = new SectionHeaderViewHolder(sectionHeader);
+                break;
             default:
                 break;
         }
@@ -64,10 +76,37 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 MovieVideoViewHolder movieVideoView = (MovieVideoViewHolder) viewHolder;
                 configureMovieVideoViewHolder(movieVideoView, position);
                 break;
+            case MOVIE_VIDEO_DETAILS_HEADER:
+                MovieHeaderViewHolder movieHeaderView = (MovieHeaderViewHolder) viewHolder;
+                configureMovieHeaderViewHolder(movieHeaderView, position);
+                break;
+            case SECTION_HEADER:
+                SectionHeaderViewHolder sectionHeaderViewHolder = (SectionHeaderViewHolder) viewHolder;
+                configureSectionHeaderViewHolder(sectionHeaderViewHolder, position);
             default:
 
                 break;
         }
+    }
+
+    private void configureSectionHeaderViewHolder(SectionHeaderViewHolder sectionHeaderViewHolder, int position) {
+        
+    }
+
+    private void configureMovieHeaderViewHolder(MovieHeaderViewHolder movieHeaderView, int position) {
+        Movie passedMovie = (Movie) items.get(position);
+
+        Picasso.with(this.mContext)
+                .load(passedMovie.getMoviePoster())
+                .into(movieHeaderView.getMoviePoster());
+
+        movieHeaderView.getMovieSynopsis().setText(passedMovie.getPlotSynopsis());
+
+        movieHeaderView.getMovieUserRating().setText(passedMovie.getUserRating() + "/10");
+
+        movieHeaderView.getMovieReleaseDate().setText(passedMovie.getReleaseDate());
+
+        movieHeaderView.getMovieTitle().setText(passedMovie.getOriginalTitle());
     }
 
     private void configureMovieVideoViewHolder(MovieVideoViewHolder movieVideoView, int position) {
@@ -93,6 +132,8 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             return MOVIE_REVIEW_VIEW;
         } else if (items.get(position) instanceof String) {
             return MOVIE_VIDEO_VIEW;
+        } else if (items.get(position) instanceof Movie) {
+            return MOVIE_VIDEO_DETAILS_HEADER;
         }
         return -1;
     }

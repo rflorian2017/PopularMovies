@@ -23,15 +23,7 @@ public class MovieReviewViewHolder extends RecyclerView.ViewHolder {
         return commentAuthor;
     }
 
-    public void setCommentAuthor(TextView commentAuthor) {
-        this.commentAuthor = commentAuthor;
-    }
-
     public TextView getCommentContent() {
         return commentContent;
-    }
-
-    public void setCommentContent(TextView commentContent) {
-        this.commentContent = commentContent;
     }
 }

@@ -30,6 +30,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
     private MovieVideoAdapter mMovieVideoAdapter;
 
+    private Movie passedMovie;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,30 +45,12 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
 
         mRecyclerViewDetails.setHasFixedSize(true);
 
-        ImageView posterIv = findViewById(R.id.movie_poster_iv);
-
         Intent intent = getIntent();
         if (intent == null) {
 
         }
 
-        Movie passedMovie = (Movie) intent.getParcelableExtra(MOVIE_PARCEL);
-
-        Picasso.with(this)
-                .load(passedMovie.getMoviePoster())
-                .into(posterIv);
-
-        TextView movieTitle = findViewById(R.id.original_title);
-        movieTitle.setText(passedMovie.getOriginalTitle());
-
-        TextView moviePlot = findViewById(R.id.movie_synopsis);
-        moviePlot.setText(passedMovie.getPlotSynopsis());
-
-        TextView movieUserRating = findViewById(R.id.movie_user_rating);
-        movieUserRating.setText(passedMovie.getUserRating() + "/10");
-
-        TextView movieReleaseDate = findViewById(R.id.movie_release_date);
-        movieReleaseDate.setText(passedMovie.getReleaseDate());
+        passedMovie = (Movie) intent.getParcelableExtra(MOVIE_PARCEL);
 
         mMovieId = passedMovie.getMovieId();
 
@@ -124,6 +108,7 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(Loader<MovieDetails> loader, MovieDetails data) {
         List<Object> itemList = new ArrayList<>();
+        itemList.add(passedMovie);
         itemList.addAll(data.getmUserReview());
         itemList.addAll(data.getmVideos());
 

@@ -1,66 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.example.roby.popularmovies.MovieDetailActivity">
 
-
-    <TextView
-        android:id="@+id/original_title"
-        style="@style/TitleStyle"
-        android:background="@color/movie_title_back_color"
-        android:paddingBottom="25dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="25dp"
-        app:layout_constraintBottom_toTopOf="@+id/movie_poster_iv" />
-
-    <ImageView
-        android:id="@+id/movie_poster_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/poster_layout_height"
-        android:layout_marginTop="@dimen/poster_layout_margin_top"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/movie_poster_content_description"
-        android:padding="@dimen/padding_poster"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/movie_synopsis"
-        app:layout_constraintRight_toLeftOf="@+id/movie_release_date"
-        app:layout_constraintTop_toBottomOf="@+id/original_title" />
-
-    <TextView
-        android:id="@+id/movie_release_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@+id/movie_poster_iv"
-        app:layout_constraintTop_toBottomOf="@id/original_title" />
-
-    <TextView
-        android:id="@+id/movie_synopsis"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:layout_constraintBottom_toTopOf="@id/rv_details"
-        app:layout_constraintTop_toBottomOf="@id/movie_poster_iv" />
-
-    <TextView
-        android:id="@+id/movie_user_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="italic"
-        app:layout_constraintLeft_toRightOf="@id/movie_poster_iv"
-        app:layout_constraintTop_toBottomOf="@id/movie_release_date" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/movie_synopsis">
+        android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
