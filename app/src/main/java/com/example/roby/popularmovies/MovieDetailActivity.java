@@ -109,7 +109,9 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
     public void onLoadFinished(Loader<MovieDetails> loader, MovieDetails data) {
         List<Object> itemList = new ArrayList<>();
         itemList.add(passedMovie);
+        itemList.add("User reviews");
         itemList.addAll(data.getmUserReview());
+        itemList.add("Trailers");
         itemList.addAll(data.getmVideos());
 
         mMovieVideoAdapter = new MovieVideoAdapter(itemList);

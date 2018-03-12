@@ -3,6 +3,7 @@ package com.example.roby.popularmovies.utils;
 import android.util.Log;
 
 import com.example.roby.popularmovies.model.Movie;
+import com.example.roby.popularmovies.model.MovieVideo;
 import com.example.roby.popularmovies.model.UserReview;
 
 import org.json.JSONArray;
@@ -33,7 +34,7 @@ public class JsonUtils {
 
     //public static final String POSTER_URL = "http://image.tmdb.org/t/p/w185/";
 
-    public static List<String> getVideos(String json) {
+    public static List<MovieVideo> getVideos(String json) {
         JSONObject videoResultsJSON = null; //declare a JSON object to interpret the string given as a parameter
         try {
             videoResultsJSON = new JSONObject(json);
@@ -47,17 +48,16 @@ public class JsonUtils {
          */
 
         JSONArray resultsArray;
-        List<String> videosArray = new ArrayList<>();
+        List<MovieVideo> videosArray = new ArrayList<>();
         try {
             //read out everything in "one shot" by looping through the JSON array
             resultsArray = videoResultsJSON.getJSONArray(JSON_REQ_RESULTS);
             for (int i = 0; i < resultsArray.length(); i++) {
                 JSONObject videoRow = new JSONObject(resultsArray.getString(i));
-                videosArray.add(videoRow.getString(MOVIE_URL_KEY));
+                videosArray.add(new MovieVideo(videoRow.getString(MOVIE_URL_KEY), i + 1));
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.v("DEBUG", "Eroare " + e.getMessage());
         }
         return videosArray;
     }

@@ -8,14 +8,14 @@ import java.util.List;
 
 public class MovieDetails {
     private List<UserReview> mUserReview;
-    private List<String> mVideos;
+    private List<MovieVideo> mVideos;
 
-    public MovieDetails(List<UserReview> userReviews, List<String> videos) {
+    public MovieDetails(List<UserReview> userReviews, List<MovieVideo> videos) {
         this.mUserReview = userReviews;
         this.mVideos = videos;
     }
 
-    public List<String> getmVideos() {
+    public List<MovieVideo> getmVideos() {
         return mVideos;
     }
 
@@ -27,7 +27,7 @@ public class MovieDetails {
         this.mUserReview = mUserReview;
     }
 
-    public void setmVideos(List<String> mVideos) {
+    public void setmVideos(List<MovieVideo> mVideos) {
         this.mVideos = mVideos;
     }
 }

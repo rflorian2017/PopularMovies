@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.roby.popularmovies.model.Movie;
 import com.example.roby.popularmovies.model.MovieHeaderViewHolder;
 import com.example.roby.popularmovies.model.MovieReviewViewHolder;
+import com.example.roby.popularmovies.model.MovieVideo;
 import com.example.roby.popularmovies.model.MovieVideoViewHolder;
 import com.example.roby.popularmovies.model.SectionHeaderViewHolder;
 import com.example.roby.popularmovies.model.UserReview;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int MOVIE_VIDEO_VIEW = 0, MOVIE_REVIEW_VIEW = 1, MOVIE_VIDEO_DETAILS_HEADER = 2, SECTION_HEADER = 3;
+    private final String MOVIE_TRAILER_STRING = "Trailer ";
 
     private List<Object> items;
 
@@ -90,7 +92,7 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void configureSectionHeaderViewHolder(SectionHeaderViewHolder sectionHeaderViewHolder, int position) {
-        
+        sectionHeaderViewHolder.getHeaderSection().setText((CharSequence) items.get(position));
     }
 
     private void configureMovieHeaderViewHolder(MovieHeaderViewHolder movieHeaderView, int position) {
@@ -110,7 +112,9 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void configureMovieVideoViewHolder(MovieVideoViewHolder movieVideoView, int position) {
-        movieVideoView.getVideoLink().setText((CharSequence) items.get(position));
+        MovieVideo movieVideo = (MovieVideo) items.get(position);
+        movieVideoView.getVideoLink().setText(MOVIE_TRAILER_STRING + movieVideo.getIdInSequence());
+        movieVideoView.setYoutubeLink(movieVideo.getMovieYoutubeId());
     }
 
     private void configureReviewViewHolder(MovieReviewViewHolder movieReviewView, int position) {
@@ -130,10 +134,12 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         if (items.get(position) instanceof UserReview) {
             return MOVIE_REVIEW_VIEW;
-        } else if (items.get(position) instanceof String) {
+        } else if (items.get(position) instanceof MovieVideo) {
             return MOVIE_VIDEO_VIEW;
         } else if (items.get(position) instanceof Movie) {
             return MOVIE_VIDEO_DETAILS_HEADER;
+        } else if (items.get(position) instanceof String) {
+            return SECTION_HEADER;
         }
         return -1;
     }
