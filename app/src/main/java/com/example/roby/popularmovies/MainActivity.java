@@ -30,9 +30,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private RecyclerView mRecyclerView;
     private MoviesAdapter mMovieAdapter;
     public static final int SPAN_COUNT = 2;
-    private static final String SORTING_BY_POPULARITY = "popular";
-    private static final String SORTING_CRITERIA_EXTRA = "popular";
-    private static final String SORTING_BY_TOP_RATED = "top_rated";
+//    private static final String SORTING_BY_POPULARITY = "popular";
+//    private static final String SORTING_BY_FAVORITES = "favorites";
+//    private static final String SORTING_BY_TOP_RATED = "top_rated";
     private static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
     private static final int MOVIE_QUERIES_LOADER_ID = 0;
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
@@ -66,7 +66,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private void setupSharedPreferences() {
         //by default I am showing movies by popularity
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mMovieAdapter.setSortingCriteria(sharedPrefs.getBoolean(getString(R.string.pref_sort_crit), getResources().getBoolean(R.bool.pref_sort_crit_default)) ? SORTING_BY_POPULARITY : SORTING_BY_TOP_RATED);
+        mMovieAdapter.setSortingCriteria(sharedPrefs.getString(getString(R.string.pref_sort_crit),
+                getString(R.string.pref_sort_crit_top_rated_key)));
+
         sharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -118,7 +120,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
      */
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals((getString(R.string.pref_sort_crit)))) {
-            mMovieAdapter.setSortingCriteria(sharedPreferences.getBoolean(key, getResources().getBoolean(R.bool.pref_sort_crit_default)) ? SORTING_BY_POPULARITY : SORTING_BY_TOP_RATED);
+            mMovieAdapter.setSortingCriteria(sharedPreferences.getString(getString(R.string.pref_sort_crit),
+                    getString(R.string.pref_sort_crit_top_rated_key)));
             PREFERENCES_HAVE_BEEN_UPDATED = true;
         }
     }

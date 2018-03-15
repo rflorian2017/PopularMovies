@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-        android:defaultValue="true"
+    <ListPreference
+        android:defaultValue="@string/pref_sort_crit_top_rated_key"
+        android:entries="@array/pref_sorting_criteria_labels"
+        android:entryValues="@array/pref_sorting_criteria_values"
         android:key="@string/pref_sort_crit"
-        android:summaryOff="@string/pref_sort_crit_off"
-        android:summaryOn="@string/pref_sort_crit_on"
-        android:title="@string/pref_sort_label">
-    </CheckBoxPreference>
+        android:title="@string/pref_sort_label" />
 </PreferenceScreen>

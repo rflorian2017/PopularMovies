@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_sorting_criteria_values">
+        <item>@string/pref_sort_crit_top_rated_key</item>
+        <item>@string/pref_sort_crit_popular_key</item>
+        <item>@string/pref_sort_crit_favorites_key</item>
+    </array>
+    <array name="pref_sorting_criteria_labels">
+        <item>@string/pref_sort_crit_top_rated</item>
+        <item>@string/pref_sort_crit_popular</item>
+        <item>@string/pref_sort_crit_favorites</item>
+    </array>
+</resources>
