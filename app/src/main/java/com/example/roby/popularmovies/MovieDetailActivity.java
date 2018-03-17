@@ -1,6 +1,7 @@
 package com.example.roby.popularmovies;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.roby.popularmovies.model.Movie;
 import com.example.roby.popularmovies.model.MovieDetails;
+import com.example.roby.popularmovies.utils.FavoriteMovieDbHelper;
 import com.example.roby.popularmovies.utils.JsonUtils;
 import com.example.roby.popularmovies.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -46,11 +48,8 @@ public class MovieDetailActivity extends AppCompatActivity implements LoaderMana
         mRecyclerViewDetails.setHasFixedSize(true);
 
         Intent intent = getIntent();
-        if (intent == null) {
 
-        }
-
-        passedMovie = (Movie) intent.getParcelableExtra(MOVIE_PARCEL);
+        passedMovie = intent.getParcelableExtra(MOVIE_PARCEL);
 
         mMovieId = passedMovie.getMovieId();
 

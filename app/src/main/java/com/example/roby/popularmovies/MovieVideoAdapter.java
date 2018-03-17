@@ -1,12 +1,13 @@
 package com.example.roby.popularmovies;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.example.roby.popularmovies.model.FavoriteMovieContract;
 import com.example.roby.popularmovies.model.Movie;
 import com.example.roby.popularmovies.model.MovieHeaderViewHolder;
 import com.example.roby.popularmovies.model.MovieReviewViewHolder;
@@ -30,7 +31,6 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     // Store the context for easy access
     private Context mContext;
-
 
     public MovieVideoAdapter(List<Object> items) {
         this.items = items;
@@ -109,6 +109,16 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         movieHeaderView.getMovieReleaseDate().setText(passedMovie.getReleaseDate());
 
         movieHeaderView.getMovieTitle().setText(passedMovie.getOriginalTitle());
+
+        if(checkIfEntryExists(passedMovie)) {
+            movieHeaderView.getButtonFavorite().setText(R.string.remove_from_favorite_button_text);
+            movieHeaderView.setInsertNewRow(false);
+        }
+        else {
+            movieHeaderView.getButtonFavorite().setText(R.string.mark_as_favorite_button_text);
+            movieHeaderView.setInsertNewRow(true);
+        }
+        movieHeaderView.setMovie(passedMovie);
     }
 
     private void configureMovieVideoViewHolder(MovieVideoViewHolder movieVideoView, int position) {
@@ -121,6 +131,15 @@ public class MovieVideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         UserReview userReview = (UserReview) items.get(position);
         movieReviewView.getCommentAuthor().setText(userReview.getmAuthor());
         movieReviewView.getCommentContent().setText(userReview.getmContent());
+    }
+
+    private boolean checkIfEntryExists(Movie movie) {
+        Cursor cursor = mContext.getContentResolver().query(FavoriteMovieContract.FavoriteMovieEntry.CONTENT_URI,
+                new String[]{FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID},
+                FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID + "=?",
+                new String[] {movie.getMovieId()},
+                FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID);
+        return cursor.getCount() > 0;
     }
 
     @Override

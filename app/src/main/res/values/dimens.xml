@@ -3,4 +3,17 @@
     <dimen name="padding_poster">10dp</dimen>
     <dimen name="poster_layout_height">200dp</dimen>
     <dimen name="poster_layout_margin_top">8dp</dimen>
+    <dimen name="padding_favorite_movie">15dp</dimen>
+    <dimen name="padding_bottom_title">25dp</dimen>
+    <dimen name="padding_left_title">10dp</dimen>
+    <dimen name="padding_right_title">10dp</dimen>
+    <dimen name="padding_top_title">25dp</dimen>
+    <dimen name="text_size_release_date">22sp</dimen>
+    <dimen name="padding_synopsis">10dp</dimen>
+    <dimen name="pading_button_favorite">10dp</dimen>
+    <dimen name="padding_movie_review">10dp</dimen>
+    <dimen name="padding_video_link">10dp</dimen>
+    <dimen name="layout_movie_button">20dp</dimen>
+    <dimen name="text_size_header_id">18sp</dimen>
+    <dimen name="padding_header_layout">16dp</dimen>
 </resources>

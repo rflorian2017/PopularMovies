@@ -8,14 +8,14 @@
         android:id="@+id/movie_review_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="@dimen/padding_movie_review"
+        android:paddingRight="@dimen/padding_movie_review"
         android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/movie_review_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp" />
+        android:padding="@dimen/padding_movie_review" />
 
 </LinearLayout>

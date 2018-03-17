@@ -32,7 +32,6 @@ public class MovieVideoViewHolder extends RecyclerView.ViewHolder implements Vie
     @Override
     public void onClick(View view) {
         watchYoutubeVideo(view.getContext(), youtubeLink);
-//        Toast.makeText(view.getContext(), videoLink.getText(), Toast.LENGTH_LONG).show();
     }
 
     public void setYoutubeLink(String youtubeLink) {

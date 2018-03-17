@@ -3,6 +3,7 @@ package com.example.roby.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
@@ -19,20 +20,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.roby.popularmovies.model.FavoriteMovieContract;
 import com.example.roby.popularmovies.model.Movie;
 import com.example.roby.popularmovies.utils.JsonUtils;
 import com.example.roby.popularmovies.utils.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<List<Movie>> {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<List<Object>> {
     private RecyclerView mRecyclerView;
     private MoviesAdapter mMovieAdapter;
-    public static final int SPAN_COUNT = 2;
-//    private static final String SORTING_BY_POPULARITY = "popular";
-//    private static final String SORTING_BY_FAVORITES = "favorites";
-//    private static final String SORTING_BY_TOP_RATED = "top_rated";
+    private static final int SPAN_COUNT = 2;
     private static final String CHECK_INTERNET_CONNECTION = "Please check the internet connection";
     private static final int MOVIE_QUERIES_LOADER_ID = 0;
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         //set the adapter of the recycle view
         mMovieAdapter = new MoviesAdapter(this);
-        mRecyclerView.setAdapter(mMovieAdapter);
 
         //preferences are used to switch the sorting criteria
         setupSharedPreferences();
@@ -60,6 +59,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         //LoaderManager.enableDebugLogging(true);
         getSupportLoaderManager().initLoader(MOVIE_QUERIES_LOADER_ID, null, this);
 
+    }
+
+    //create a method for reading the db
+    private Cursor getAllFavoriteMovies() {
+        return getContentResolver().query(FavoriteMovieContract.FavoriteMovieEntry.CONTENT_URI,
+                null,
+                null,
+                null,
+                FavoriteMovieContract.FavoriteMovieEntry.COLUMN_ID);
     }
 
     //this is used to change the pref of the sorting criteria
@@ -135,10 +143,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public Loader<List<Movie>> onCreateLoader(int i, final Bundle args) {
-        return new AsyncTaskLoader<List<Movie>>(this) {
+    public Loader<List<Object>> onCreateLoader(int i, final Bundle args) {
+        return new AsyncTaskLoader<List<Object>>(this) {
             //for caching purposes
-            List<Movie> mMovies = null;
+            List<Object> mMovies = null;
 
             @Override
             protected void onStartLoading() {
@@ -150,28 +158,38 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             }
 
             @Override
-            public List<Movie> loadInBackground() {
+            public List<Object> loadInBackground() {
                 String sortingCriteria = mMovieAdapter.getSortingCriteria();
+                List<Object> movieListAsObjects = new ArrayList<>();
                 if ((sortingCriteria == null) || TextUtils.isEmpty(sortingCriteria)) {
                     return null;
                 }
-                String movieRequest = sortingCriteria;
-                URL movieRequestUrl = NetworkUtils.buildSortingCriteriaUrl(movieRequest);
 
-                try {
-                    String jsonWeatherResponse = NetworkUtils
-                            .getResponseFromHttpUrl(movieRequestUrl);
+                if (sortingCriteria.equals(getString(R.string.pref_sort_crit_favorites_key))) {
+                    Cursor cursor = getAllFavoriteMovies();
+                    movieListAsObjects.add(cursor);
+                    return movieListAsObjects;
+                } else {
+                    String movieRequest = sortingCriteria;
+                    URL movieRequestUrl = NetworkUtils.buildSortingCriteriaUrl(movieRequest);
 
-                    return JsonUtils.parseMovieJson(jsonWeatherResponse);
+                    try {
+                        String jsonWeatherResponse = NetworkUtils
+                                .getResponseFromHttpUrl(movieRequestUrl);
+                        movieListAsObjects.addAll(JsonUtils.parseMovieJson(jsonWeatherResponse));
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                        return movieListAsObjects;
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        e.getMessage();
+                    }
                     return null;
                 }
             }
 
             @Override
-            public void deliverResult(List<Movie> data) {
+            public void deliverResult(List<Object> data) {
                 super.deliverResult(data);
                 mMovies = data;
             }
@@ -179,8 +197,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
+    public void onLoadFinished(Loader<List<Object>> loader, List<Object> movies) {
         mMovieAdapter.setMovieData(movies);
+        mRecyclerView.setAdapter(mMovieAdapter);
         if (null == movies) {
             showErrorMessage();
         }
@@ -204,13 +223,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 activeNetwork.isConnectedOrConnecting();
         if (isConnected) {
 
-        }
-        else
+        } else
             Toast.makeText(this, CHECK_INTERNET_CONNECTION, Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Movie>> loader) {
+    public void onLoaderReset(Loader<List<Object>> loader) {
 
     }
 }

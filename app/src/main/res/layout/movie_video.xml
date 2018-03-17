@@ -7,8 +7,8 @@
 
     <Button
         android:id="@+id/movie_button"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/layout_movie_button"
+        android:layout_height="@dimen/layout_movie_button"
         android:background="@drawable/triangle"
         android:rotation="90" />
 
@@ -16,6 +16,6 @@
         android:id="@+id/movie_video_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp" />
+        android:paddingLeft="@dimen/padding_video_link" />
 
 </FrameLayout>

@@ -8,10 +8,10 @@
         android:id="@+id/original_title"
         style="@style/TitleStyle"
         android:background="@color/movie_title_back_color"
-        android:paddingBottom="25dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="25dp"
+        android:paddingBottom="@dimen/padding_bottom_title"
+        android:paddingLeft="@dimen/padding_left_title"
+        android:paddingRight="@dimen/padding_right_title"
+        android:paddingTop="@dimen/padding_top_title"
         app:layout_constraintBottom_toTopOf="@+id/movie_poster_iv"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
@@ -32,7 +32,7 @@
         android:id="@+id/movie_release_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
+        android:textSize="@dimen/text_size_release_date"
         android:textStyle="bold"
         app:layout_constraintLeft_toRightOf="@+id/movie_poster_iv"
         app:layout_constraintTop_toBottomOf="@id/original_title" />
@@ -41,8 +41,8 @@
         android:id="@+id/movie_synopsis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="@dimen/padding_synopsis"
+        android:paddingRight="@dimen/padding_synopsis"
         app:layout_constraintTop_toBottomOf="@id/movie_poster_iv" />
 
     <TextView
@@ -60,6 +60,6 @@
         android:text="@string/mark_as_favorite_button_text"
         app:layout_constraintLeft_toRightOf="@id/movie_poster_iv"
         app:layout_constraintTop_toBottomOf="@id/movie_user_rating"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="@dimen/pading_button_favorite"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -38,6 +38,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        
+        <provider
+            android:authorities="com.example.roby.popularmovies"
+            android:name=".model.PopularMoviesContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

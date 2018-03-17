@@ -1,13 +1,18 @@
 package com.example.roby.popularmovies;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.roby.popularmovies.model.FavoriteMovieContract;
+import com.example.roby.popularmovies.model.FavoriteMovieViewHolder;
 import com.example.roby.popularmovies.model.Movie;
+import com.example.roby.popularmovies.model.MovieViewHolder;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -17,37 +22,20 @@ import java.util.List;
  */
 
 // Create the basic adapter extending from RecyclerView.Adapter
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // Provide a direct reference to each of the views within a data item
-    // Used to cache the views within the item layout for fast access
-    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public ImageView mPosterImageView;
-
-        //create a constructor that accepts the entire item cell
-        // and does the view lookups to find each subview
-        public MovieViewHolder(View itemView) {
-
-            super(itemView);
-            mPosterImageView = (ImageView) itemView.findViewById(R.id.poster_iv);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
-            Movie movie = mMovies.get(adapterPosition);
-            mClickHandler.onClick(movie);
-        }
-    }
+    private final int MOVIE_VIEW = 0, TITLE_VIEW = 1;
 
     // Store a member variable for the movies
-    private List<Movie> mMovies;
+    private List<Object> items;
     // Store the context for easy access
     private Context mContext;
 
     //string for sorting criteria used in JSON request later on
     String mSortingCriteria;
+
+    //define a Cursor for the movies passed from the activity
+    private Cursor mFavoriteMovieCursor;
 
     // Click handler to allow transition to a detail activity
     final private MovieAdapterOnClickHandler mClickHandler;
@@ -68,46 +56,100 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     @Override
-    public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
         mContext = viewGroup.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        // Inflate the custom layout
-        View movieView = inflater.inflate(R.layout.movie_poster, viewGroup, false);
+        RecyclerView.ViewHolder viewHolder = null;
 
-        // Return a new holder instance
-        MovieViewHolder viewHolder = new MovieViewHolder(movieView);
+        switch (viewType) {
+            case MOVIE_VIEW:
+                // Inflate the custom layout
+                View movieView = inflater.inflate(R.layout.movie_poster, viewGroup, false);
+                // Return a new holder instance
+                viewHolder = new MovieViewHolder(movieView, mClickHandler);
+                ((MovieViewHolder)viewHolder).setMovies(items);
+
+                break;
+            case TITLE_VIEW:
+                View favoriteMovieView = inflater.inflate(R.layout.favorite_movie, viewGroup, false);
+                GridLayoutManager.LayoutParams lp = (GridLayoutManager.LayoutParams) favoriteMovieView.getLayoutParams();
+                lp.height = viewGroup.getMeasuredHeight() / 4;
+                favoriteMovieView.setLayoutParams(lp);
+                viewHolder = new FavoriteMovieViewHolder(favoriteMovieView);
+                break;
+            default:
+                break;
+        }
         return viewHolder;
     }
 
-    @Override
-    public void onBindViewHolder(MovieViewHolder viewHolder, int position) {
-        // Get the data model based on position
-        Movie movie = mMovies.get(position);
-        ImageView imageView = viewHolder.mPosterImageView;
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        switch (viewHolder.getItemViewType()) {
+            case MOVIE_VIEW:
+                MovieViewHolder movieViewHolder = (MovieViewHolder) viewHolder;
+                configureMovieViewHolder(movieViewHolder, position);
+                break;
+            case TITLE_VIEW:
+                FavoriteMovieViewHolder favoriteMovieView = (FavoriteMovieViewHolder) viewHolder;
+                configureFavoriteMovieViewHolder(favoriteMovieView, position);
+                break;
+            default:
+                break;
+        }
+    }
 
+    private void configureFavoriteMovieViewHolder(FavoriteMovieViewHolder favoriteMovieView, int position) {
+        //again assume here that we only have one cursor. And ensure this
+        /* TODO: make it accept any number of cursors */
+        mFavoriteMovieCursor = (Cursor) items.get(0);
+        if (!mFavoriteMovieCursor.moveToPosition(position))
+            return;
+        //get movie title
+        String favoriteMovieName = mFavoriteMovieCursor.getString(mFavoriteMovieCursor.getColumnIndex(FavoriteMovieContract.FavoriteMovieEntry.COLUMN_TITLE));
+        favoriteMovieView.getTvMovieTitle().setText(favoriteMovieName);
+    }
+
+    private void configureMovieViewHolder(MovieViewHolder movieViewHolder, int position) {
+        Movie passedMovie = (Movie) items.get(position);
         Picasso.with(this.getContext())
-                .load(movie.getMoviePoster())
-                .into(imageView);
+                .load(passedMovie.getMoviePoster())
+                .into(movieViewHolder.getmPosterImageView());
         // Set item views based on your views and data model
-
     }
 
     @Override
     public int getItemCount() {
-        if (null == mMovies) return 0;
-        return mMovies.size();
+        if (null == items) return 0;
+        //assume here that only one cursor is present. For now, as the movie app contains only one cursor, it is ok.
+        /* TODO: In the future, try here to make it generic */
+        if ((items.size() == 1) && (items.get(0) instanceof Cursor)) {
+            return ((Cursor) items.get(0)).getCount();
+        }
+        return items.size();
     }
 
-    public void setMovieData(List<Movie> movieData) {
-        mMovies = movieData;
+    public void setMovieData(List<Object> items) {
+        this.items = items;
         notifyDataSetChanged();
     }
 
-    public List<Movie> getMovies() {
-        return mMovies;
+    //Returns the view type of the item at position for the purposes of view recycling.
+    @Override
+    public int getItemViewType(int position) {
+        //here we have a cursor!!!
+        if(items.size() <= position) {
+            return TITLE_VIEW;
+        }
+        if (items.get(position) instanceof Movie) {
+            return MOVIE_VIEW;
+        } else if (items.get(position) instanceof Cursor) {
+            return TITLE_VIEW;
+        }
+        return -1;
     }
+
     public void setSortingCriteria(String sortingCriteria) {
         mSortingCriteria = sortingCriteria;
     }
